@@ -55,8 +55,39 @@ export default async function handler(req, res) {
             let valorFormatado = parseFloat(valor).toFixed(2).replace('.', '');
             valorFormatado = parseInt(valorFormatado);
 
+            // Lógica para limpar o UTM (extrair apenas o valor do utm_source se vier como query string)
+            let utmClean = utm;
+            if (utm && (utm.includes('%3D') || utm.includes('='))) {
+                try {
+                    // Tenta decodificar se estiver encoded
+                    let decodedUtm = decodeURIComponent(utm);
+                    // Se ainda tiver encoding (double encoded), tenta de novo
+                    if (decodedUtm.includes('%3D')) {
+                        decodedUtm = decodeURIComponent(decodedUtm);
+                    }
+
+                    // Procura por utm_source=VALOR
+                    if (decodedUtm.includes('utm_source=')) {
+                        const params = new URLSearchParams(decodedUtm);
+                        const source = params.get('utm_source');
+                        if (source) {
+                            utmClean = source;
+                        }
+                    } else if (decodedUtm.includes('=')) {
+                        // Se não tem utm_source explícito mas tem =, assume que é query string e processa
+                        const params = new URLSearchParams(decodedUtm);
+                        const source = params.get('utm_source');
+                        if (source) {
+                            utmClean = source;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Erro ao limpar UTM:", e);
+                }
+            }
+
             const postfields = {
-                utm: utm,
+                utm: utmClean,
                 item: {
                     price: valorFormatado,
                     title: ofertaNome,
