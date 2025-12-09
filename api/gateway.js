@@ -71,19 +71,22 @@ export default async function handler(req, res) {
                         const params = new URLSearchParams(decodedUtm);
                         const source = params.get('utm_source');
                         if (source) {
-                            utmClean = source;
+                            utmClean = `utm_source=${source}`;
                         }
                     } else if (decodedUtm.includes('=')) {
                         // Se não tem utm_source explícito mas tem =, assume que é query string e processa
                         const params = new URLSearchParams(decodedUtm);
                         const source = params.get('utm_source');
                         if (source) {
-                            utmClean = source;
+                            utmClean = `utm_source=${source}`;
                         }
                     }
                 } catch (e) {
                     console.error("Erro ao limpar UTM:", e);
                 }
+            } else if (utm && !utm.includes('utm_source=')) {
+                // Se veio apenas o código (ex: TT-...), adiciona o prefixo
+                utmClean = `utm_source=${utm}`;
             }
 
             const postfields = {
