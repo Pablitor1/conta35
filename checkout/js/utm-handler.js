@@ -169,8 +169,8 @@ function initUTMHandler(hardCodedConfig) {
         // Get existing URLSearchParams to preserve all current query parameters
         const searchParams = new URLSearchParams(newUrl.search);
         // Set or update only the utm_source parameter
-    // Garante que o valor está limpo, sem % ou =
-    const cleanLeadId = String(leadId).replace(/[^a-zA-Z0-9-_]/g, "");
+    // Garante que o valor está limpo, sem % ou =, e não inclui o sinal de igual
+    const cleanLeadId = String(leadId).replace(/[^a-zA-Z0-9-_]/g, "").replace(/=/g, "");
     searchParams.set(UTM_SOURCE_PARAM, cleanLeadId);
         newUrl.search = searchParams.toString();
         window.history.replaceState({}, '', newUrl.toString());
@@ -185,8 +185,8 @@ function initUTMHandler(hardCodedConfig) {
             try {
                 const url = new URL(link.href);
                 // Update ALL links (internal and external)
-                // Garante que o valor está limpo, sem % ou =
-                const cleanLeadId = String(leadId).replace(/[^a-zA-Z0-9-_]/g, "");
+                // Garante que o valor está limpo, sem % ou =, e não inclui o sinal de igual
+                const cleanLeadId = String(leadId).replace(/[^a-zA-Z0-9-_]/g, "").replace(/=/g, "");
                 url.searchParams.set(UTM_SOURCE_PARAM, cleanLeadId);
                 link.href = url.href;
             }
