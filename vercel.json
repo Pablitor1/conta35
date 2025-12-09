@@ -12,6 +12,6 @@
             "maxDuration": 10
         }
     },
-    "public": true,
+    "outputDirectory": ".",
     "cleanUrls": true
 }
